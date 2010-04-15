@@ -57,13 +57,16 @@ sub afterinit {
     return unless defined $DB::PluginHandler;
     $DB::PluginHandler->run_hook('db.afterinit');
 }
+
+
 no warnings 'redefine';
-my $eval = \&DB::eval;
+my $DB_eval = \&DB::eval;
 *eval = sub {
-    my @result = $DB::PluginHandler->run_hook('db.eval', { eval => $eval });
-    return if grep { $_ eq HANDLED } @result;
-    $eval->();
+    my @result = $DB::PluginHandler->run_hook('db.eval');
+    &$DB_eval;   # XXX Why doesn't this work if called from the plugin?
+    $_->() for grep { ref eq 'CODE' } @result;
 };
+
 1;
 
 =for test_synopsis
@@ -176,43 +179,13 @@ This is the third argument passed to C<DB::cmd_b()>.
 The debugger's C<eval()> function is overridden so we can hook into it. This
 is needed to define new debugger commands that take arguments. Each plugin
 that registered this hook will get a chance to inspect the command line, which
-is the last line in C<$DB::evalarg> and act on it. Each hook gets passed a
-code reference in the original C<DB::eval()> function. If a plugin decides the
-handle the command, it needs to call the original function and return
-C<HANDLED> - see L<DB::Pluggable::Constants> - to indicate that it has done
-so. If a plugin does not want to handle the command, it must return
-C<DECLINED>.
-
-The hook passes these named arguments:
-
-=over 4
-
-=item C<eval>
-
-The code reference to the original C<DB::eval()> function.
+is the last line in C<$DB::evalarg> and act on it. The plugin can return a
+code reference which will be executed after the original C<DB::eval()>
+function has finished. Using the code reference you can undo any temporary
+changes you might have introduced to make your command work. For example, read
+the source code of L<DB::Pluggable::Dumper>.
 
 =back
-
-=back
-
-For example, if you wanted to define a new C<xx> debugger command, you could
-use:
-
-    sub register {
-        my ($self, $context) = @_;
-        $context->register_hook(
-            $self,
-            'db.eval' => $self->can('eval'),
-        );
-    }
-
-    sub eval {
-        my ($self, $context, $args) = @_;
-        return DECLINED unless $DB::evalarg =~ s/\n\s*xx\s+([^\n]+)$/\n $1/;
-        ... # handle the actual command
-        $args->{eval}->();
-        HANDLED;
-    }
 
 =method enable_watchfunction
 

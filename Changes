@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - fixed the db.eval hook handler
 
 1.101050  2010-04-15 00:15:37 Europe/Vienna
     - added db.eval hook so you can define custom commands that take arguments
