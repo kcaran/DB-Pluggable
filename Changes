@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - fixed POD (:prelude)
 
 1.101051  2010-04-15 18:01:53 Europe/Vienna
     - fixed the db.eval hook handler

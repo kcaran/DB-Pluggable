@@ -18,7 +18,7 @@ sub afterinit {
     die "TypeAhead: need 'type' config key\n" unless defined $type;
     die "TypeAhead: 'type' must be an array reference of things to type\n"
       unless ref $type eq 'ARRAY';
-    
+
     if (my $env_key = $self->conf->{ifenv}) {
         return unless $ENV{$env_key};
     }
@@ -52,7 +52,7 @@ __END__
     plugins:
       - module: TypeAhead
         config:
-            type: 
+            type:
                 - '{l'
                 - 'c'
         ifenv: DBTYPEAHEAD

@@ -69,9 +69,13 @@ my $DB_eval = \&DB::eval;
 
 1;
 
+=begin :prelude
+
 =for test_synopsis
 1;
 __END__
+
+=end :prelude
 
 =head1 SYNOPSIS
 
