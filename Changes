@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.111750  2011-06-24 23:04:34 Europe/Vienna
     - complete rewrite to move from Hook::Modular to Brickyard - it's more
       lightweight and easier to use
 
