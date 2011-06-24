@@ -129,12 +129,6 @@ See L<DB::Pluggable::Role::Initializer>.
 
 See L<DB::Pluggable::Role::WatchFunction>.
 
-=item C<-CmdBHandler>
-
-See L<DB::Pluggable::Role::CmdBHandler>. The C<cmd_b()> method
-implemented by a plugin consuming this role will get the same
-arguments as the C<DB::cmd_b()> function.
-
 =item C<-AfterInit>
 
 See L<DB::Pluggable::Role::AfterInit>.
@@ -151,12 +145,6 @@ introduced to make your command work.
 
 =back
 
-=method enable_watchfunction
-
-Tells the debugger to call C<DB::watchfunction()>, which in turn
-calls the C<watchfunction()> method of all plugins that consume the
-C<-WatchFunction> role.
-
 =method run_with_config
 
 Convenience class method to create, initialize and run the plugin
@@ -169,6 +157,12 @@ Like the method with the same name in L<Brickyard>.
 =method init_from_config
 
 Like the method with the same name in L<Brickyard>.
+
+=method enable_watchfunction
+
+Tells the debugger to call C<DB::watchfunction()>, which in turn
+calls the C<watchfunction()> method of all plugins that consume the
+C<-WatchFunction> role.
 
 =method run
 

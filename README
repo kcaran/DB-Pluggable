@@ -34,11 +34,6 @@ DESCRIPTION
     DB::Pluggable::Plugin::BreakOnTestNumber does.
 
 METHODS
-  enable_watchfunction
-    Tells the debugger to call "DB::watchfunction()", which in turn calls
-    the "watchfunction()" method of all plugins that consume the
-    "-WatchFunction" role.
-
   run_with_config
     Convenience class method to create, initialize and run the plugin system
     with the given configuration file or scalar reference.
@@ -48,6 +43,11 @@ METHODS
 
   init_from_config
     Like the method with the same name in Brickyard.
+
+  enable_watchfunction
+    Tells the debugger to call "DB::watchfunction()", which in turn calls
+    the "watchfunction()" method of all plugins that consume the
+    "-WatchFunction" role.
 
   run
     This method just calls the "initialize()" method of all plugins that
@@ -67,11 +67,6 @@ Plugin Phases
 
     "-WatchFunction"
         See DB::Pluggable::Role::WatchFunction.
-
-    "-CmdBHandler"
-        See DB::Pluggable::Role::CmdBHandler. The "cmd_b()" method
-        implemented by a plugin consuming this role will get the same
-        arguments as the "DB::cmd_b()" function.
 
     "-AfterInit"
         See DB::Pluggable::Role::AfterInit.
