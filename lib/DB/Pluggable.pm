@@ -1,14 +1,29 @@
-use 5.008;
+use 5.010;
 use strict;
 use warnings;
 
 package DB::Pluggable;
 
 # ABSTRACT: Add plugin support for the Perl debugger
-use DB::Pluggable::Constants ':all';
-use Hook::LexWrap;
-use parent 'Hook::Modular';
-use constant PLUGIN_NAMESPACE => 'DB::Pluggable';
+use Brickyard::Accessor new => 1, rw => [qw(brickyard)];
+use Brickyard 1.111750;
+
+sub run_with_config {
+    my $file = $_[1];
+    __PACKAGE__->new->init_from_config($file)->run;
+}
+
+sub plugins_with {
+    my ($self, $role) = @_;
+    $self->brickyard->plugins_with($role);
+}
+
+sub init_from_config {
+    my $self = shift;
+    $self->brickyard(Brickyard->new(base_package => 'DB::Pluggable'));
+    $self->brickyard->init_from_config(@_);
+    $self;
+}
 
 sub enable_watchfunction {
     my $self = shift;
@@ -18,31 +33,17 @@ sub enable_watchfunction {
 
 sub run {
     my $self = shift;
-    $self->run_hook('plugin.init');
-    our $cmd_b_wrapper = wrap 'DB::cmd_b', pre => sub {
-        my ($cmd, $line, $dbline) = @_;
-        my @result = $self->run_hook(
-            'db.cmd.b',
-            {   cmd    => $cmd,
-                line   => $line,
-                dbline => $dbline,
-            }
-        );
-
-        # short-circuit (i.e., don't call the original debugger function)
-        # if a plugin has handled it
-        $_[-1] = 1 if grep { $_ eq HANDLED } @result;
-    };
+    $DB::Pluggable::HANDLER = $self;
+    $_->initialize for $self->plugins_with(-Initializer);
 }
 1;
 
 # switch package so as to get the desired stack trace
-package    # hide from PAUSE indexer
+package                 # hide from PAUSE indexer
   DB;
-use DB::Pluggable::Constants ':all';
 
 sub watchfunction {
-    return unless defined $DB::PluginHandler;
+    return unless defined $DB::Pluggable::HANDLER;
     my $depth = 1;
     while (1) {
         my ($package, $file, $line, $sub) = caller $depth;
@@ -50,23 +51,23 @@ sub watchfunction {
         return if $sub =~ /::DESTROY$/;
         $depth++;
     }
-    $DB::PluginHandler->run_hook('db.watchfunction');
+    $_->watchfunction for $DB::Pluggable::HANDLER->plugins_with(-WatchFunction);
 }
 
 sub afterinit {
-    return unless defined $DB::PluginHandler;
-    $DB::PluginHandler->run_hook('db.afterinit');
+    return unless defined $DB::Pluggable::HANDLER;
+    $_->afterinit for $DB::Pluggable::HANDLER->plugins_with(-AfterInit);
 }
-
-
 no warnings 'redefine';
 my $DB_eval = \&DB::eval;
 *eval = sub {
-    my @result = $DB::PluginHandler->run_hook('db.eval');
-    &$DB_eval;   # XXX Why doesn't this work if called from the plugin?
+    my @result;
+    for my $plugin ($DB::Pluggable::HANDLER->plugins_with(-Eval)) {
+        push @result => $plugin->eval;
+    }
+    &$DB_eval;    # XXX Why doesn't this work if called from the plugin?
     $_->() for grep { ref eq 'CODE' } @result;
 };
-
 1;
 
 =begin :prelude
@@ -80,37 +81,18 @@ __END__
 =head1 SYNOPSIS
 
     $ cat ~/.perldb
-
     use DB::Pluggable;
-    use Hook::Modular::Builder;
-    my $config = builder {
-        log_level 'error';
-        enable 'BreakOnTestNumber';
-        enable 'StackTraceAsHTML';
-        enable 'TypeAhead', type => [ '{l', 'c' ] if $ENV{DBTYPEAHEAD};
-        enable 'Dumper';
-    };
+    DB::Pluggable->run_with_config(\<<EOINI)
+    [BreakOnTestNumber]
 
-    $DB::PluginHandler = DB::Pluggable->new(config => $config);
-    $DB::PluginHandler->run;
+    [TypeAhead]
+    type = {l
+    type = c
+    ifenv = DBTYPEAHEAD
 
-Alternatively, build the configuration yourself, for example, using L<YAML>:
-
-    $ cat ~/.perldb
-
-    use DB::Pluggable;
-    use YAML;
-
-    $DB::PluginHandler = DB::Pluggable->new(config => Load <<EOYAML);
-    global:
-      log:
-        level: error
-
-    plugins:
-      - module: BreakOnTestNumber
-    EOYAML
-
-    $DB::PluginHandler->run;
+    [StackTraceAsHTML]
+    [DataPrinter]
+    EOINI
 
 Then:
 
@@ -119,90 +101,76 @@ Then:
 =head1 DESCRIPTION
 
 This class adds plugin support to the Perl debugger. It is based on
-L<Hook::Modular>, so see its documentation for details.
+L<Brickyard>, so see its documentation for details.
 
-You need to have a C<~/.perldb> file (see L<perldebug> for details) that
-invokes the plugin mechanism. The one in the synopsis will do, and there is a
-more commented one in this distribution's C<etc/perldb> file.
+You need to have a C<~/.perldb> file (see L<perldebug> for details)
+that invokes the plugin mechanism.
 
-Plugins should live in the C<DB::Pluggable::> namespace, like
-L<DB::Pluggable::BreakOnTestNumber> does.
+Plugins should live in the C<DB::Pluggable::Plugin::> namespace, like
+L<DB::Pluggable::Plugin::BreakOnTestNumber> does.
 
-=head1 HOOKS
+=head1 Plugin Phases
 
 This class is very much in beta, so it's more like a proof of concept.
-Therefore, not all hooks imaginable have been added, only the ones to make
-this demo work. If you want more hooks or if the current hooks don't work for
+Therefore, not all roles - which more or less correspond to plugin
+phases - imaginable have been added, only the ones to make this demo
+work. If you want more roles or if the current roles don't work for
 you, let me know.
 
-The following hooks exist:
+The following roles exist:
 
 =over 4
 
-=item C<plugin.init>
+=item C<-Initializer>
 
-Called at the beginning of the C<run()> method. The hook doesn't get any
-arguments.
+See L<DB::Pluggable::Role::Initializer>.
 
-=item C<db.watchfunction>
+=item C<-WatchFunction>
 
-Called from within C<DB::watchfunction()>. If you want the debugger to call
-the function, you need to enable it by calling C<enable_watchfunction()>
-somewhere within your plugin. It's a good idea to enable it as late as
-possible because it is being called very often. See the
-L<DB::Pluggable::BreakOnTestNumber> source code for an example. The hook
-doesn't get any arguments.
+See L<DB::Pluggable::Role::WatchFunction>.
 
-=item C<db.cmd.b>
+=item C<-CmdBHandler>
 
-Called when the C<b> debugger command (used to set breakpoints) is invoked.
-See C<run()> below for what the hook should return.
+See L<DB::Pluggable::Role::CmdBHandler>. The C<cmd_b()> method
+implemented by a plugin consuming this role will get the same
+arguments as the C<DB::cmd_b()> function.
 
-The hook passes these named arguments:
+=item C<-AfterInit>
 
-=over 4
+See L<DB::Pluggable::Role::AfterInit>.
 
-=item C<cmd>
+=item C<-Eval>
 
-This is the first argument passed to C<DB::cmd_b()>.
-
-=item C<line>
-
-This is the second argument passed to C<DB::cmd_b()>. This is the most
-important argument as it contains the command line. See the
-L<DB::Pluggable::BreakOnTestNumber> source code for an example.
-
-=item C<dbline>
-
-This is the third argument passed to C<DB::cmd_b()>.
-
-=back
-
-=item C<db.eval>
-
-The debugger's C<eval()> function is overridden so we can hook into it. This
-is needed to define new debugger commands that take arguments. Each plugin
-that registered this hook will get a chance to inspect the command line, which
-is the last line in C<$DB::evalarg> and act on it. The plugin can return a
-code reference which will be executed after the original C<DB::eval()>
-function has finished. Using the code reference you can undo any temporary
-changes you might have introduced to make your command work. For example, read
-the source code of L<DB::Pluggable::Dumper>.
+See L<DB::Pluggable::Role::Eval>. The debugger's C<eval()> function is
+overridden so we can make it pluggable. Each plugin will get a chance
+to inspect the command line, which is the last line in C<$DB::evalarg>
+and act on it. The plugin can return a code reference which will be
+executed after the original C<DB::eval()> function has finished. Using
+the code reference you can undo any temporary changes you might have
+introduced to make your command work.
 
 =back
 
 =method enable_watchfunction
 
-Tells the debugger to call C<DB::watchfunction()>, which in turn calls the
-C<db.watchfunction> hook on all plugins that have registered it.
+Tells the debugger to call C<DB::watchfunction()>, which in turn
+calls the C<watchfunction()> method of all plugins that consume the
+C<-WatchFunction> role.
+
+=method run_with_config
+
+Convenience class method to create, initialize and run the plugin
+system with the given configuration file or scalar reference.
+
+=method plugins_with
+
+Like the method with the same name in L<Brickyard>.
+
+=method init_from_config
+
+Like the method with the same name in L<Brickyard>.
 
 =method run
 
-First it calls the C<plugin.init> hook, then it enables hooks for the relevant
-debugger commands (see above for which hooks are available).
-
-Each command-related hook should return the appropriate constant from
-L<DB::Pluggable::Constants> - either C<HANDLED> if the hook has handled the
-command, or C<DECLINED> if it didn't. If no hook has C<HANDLED> the command,
-the default command subroutine (e.g., C<DB::cmd_b()>) from C<perl5db.pl>
-will be called.
+This method just calls the C<initialize()> method of all plugins that
+consume the C<-Initializer> role.

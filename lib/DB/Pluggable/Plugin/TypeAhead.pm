@@ -1,25 +1,21 @@
-use 5.008;
+use 5.010;
 use strict;
 use warnings;
 
-package DB::Pluggable::TypeAhead;
-# ABSTRACT: Debugger plugin to add type-ahead
-use DB::Pluggable::Constants ':all';
-use base 'Hook::Modular::Plugin';
+package DB::Pluggable::Plugin::TypeAhead;
 
-sub register {
-    my ($self, $context) = @_;
-    $context->register_hook($self, 'db.afterinit' => $self->can('afterinit'),);
-}
+# ABSTRACT: Debugger plugin to add type-ahead
+use Brickyard::Accessor rw => [qw(type ifenv)];
+use Role::Basic;
+with qw(DB::Pluggable::Role::AfterInit);
 
 sub afterinit {
     my $self = shift;
-    my $type = $self->conf->{type};
+    my $type = $self->type;
     die "TypeAhead: need 'type' config key\n" unless defined $type;
     die "TypeAhead: 'type' must be an array reference of things to type\n"
       unless ref $type eq 'ARRAY';
-
-    if (my $env_key = $self->conf->{ifenv}) {
+    if (my $env_key = $self->ifenv) {
         return unless $ENV{$env_key};
     }
     no warnings 'once';
@@ -40,25 +36,13 @@ __END__
 =head1 SYNOPSIS
 
     $ cat ~/.perldb
-
     use DB::Pluggable;
-    use YAML;
-
-    $DB::PluginHandler = DB::Pluggable->new(config => Load <<EOYAML);
-    global:
-      log:
-        level: error
-
-    plugins:
-      - module: TypeAhead
-        config:
-            type:
-                - '{l'
-                - 'c'
-        ifenv: DBTYPEAHEAD
-    EOYAML
-
-    $DB::PluginHandler->run;
+    DB::Pluggable->run_with_config(\<<EOINI)
+    [TypeAhead]
+    type = {l
+    type = c
+    ifenv = DBTYPEAHEAD
+    EOINI
 
 =head1 DESCRIPTION
 
@@ -82,10 +66,6 @@ typeahead, you would run your program like this:
 The inspiration for this plugin came from Ovid's blog post at
 L<http://blogs.perl.org/users/ovid/2010/02/easier-test-debugging.html>.
 
-=method register
-
-Registers the hooks.
-
 =method afterinit
 
-Hook handler for the C<db.afterinit> hook.
+Pushes the commands to the debugger's typeahead.
