@@ -1,5 +1,5 @@
 use DB::Pluggable;
-DB::Pluggable->run_with_config_file(\<<EOINI)
+DB::Pluggable->run_with_config(\<<EOINI)
 [BreakOnTestNumber]
 
 [TypeAhead]
