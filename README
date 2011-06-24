@@ -2,7 +2,7 @@ NAME
     DB::Pluggable - Add plugin support for the Perl debugger
 
 VERSION
-    version 1.111750
+    version 1.111751
 
 SYNOPSIS
         $ cat ~/.perldb
