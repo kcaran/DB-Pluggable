@@ -29,7 +29,7 @@ __END__
 
     use DB::Pluggable;
     DB::Pluggable->run_with_config(\<<EOINI)
-    [BreakOnTestNumber]
+    [DataPrinter]
     EOINI
 
     $ perl -d foo.pl
@@ -39,11 +39,9 @@ __END__
 
     Enter h or `h h' for help, or `man perldebug' for more help.
 
-    1..9
+    DB<1> c  (or s, or n, or whatever)
     ...
-      DB<1> c
-      ...
-      DB<2> p %foo
+    DB<2> p %foo
 
 =head1 DESCRIPTION
 
