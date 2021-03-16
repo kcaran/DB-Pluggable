@@ -1,13 +1,11 @@
-use 5.010;
+package DB::Pluggable::Plugin::DataPrinter;
 use strict;
 use warnings;
-
-package DB::Pluggable::Plugin::DataPrinter;
-
-# ABSTRACT: Debugger plugin to use Data::Printer
+use 5.010;
 use Role::Basic;
 use Data::Printer; # to make it a requirement
 with qw(DB::Pluggable::Role::Initializer);
+our $VERSION = '1.112001';
 
 sub initialize {
     no warnings 'once';
@@ -15,13 +13,14 @@ sub initialize {
 }
 1;
 
-=begin :prelude
+=pod
 
-=for test_synopsis
-1;
+=for test_synopsis 1;
 __END__
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable::Plugin::DataPrinter - Debugger plugin to use Data::Printer
 
 =head1 SYNOPSIS
 
@@ -29,7 +28,7 @@ __END__
 
     use DB::Pluggable;
     DB::Pluggable->run_with_config(\<<EOINI)
-    [BreakOnTestNumber]
+    [DataPrinter]
     EOINI
 
     $ perl -d foo.pl
@@ -39,11 +38,9 @@ __END__
 
     Enter h or `h h' for help, or `man perldebug' for more help.
 
-    1..9
+    DB<1> c  (or s, or n, or whatever)
     ...
-      DB<1> c
-      ...
-      DB<2> p %foo
+    DB<2> p %foo
 
 =head1 DESCRIPTION
 
@@ -51,6 +48,8 @@ This debugger plugin exposes L<Data::Printer>'s C<p> command to the
 debugger. Use the C<~/.dataprinter> file to control the output - see
 L<Data::Printer> for details.
 
-=method initialize
+=head1 METHODS
+
+=head2 initialize
 
 Defines a debugger alias for the C<p> command.

@@ -1,10 +1,7 @@
-use 5.010;
+package DB::Pluggable::Plugin::BreakOnTestNumber;
 use strict;
 use warnings;
-
-package DB::Pluggable::Plugin::BreakOnTestNumber;
-
-# ABSTRACT: Debugger plugin to break on Test::Builder-based tests
+use 5.010;
 use Role::Basic;
 use Hook::LexWrap;
 use Test::Builder;    # preload so we can "safely" overwrite lock()
@@ -12,6 +9,7 @@ with qw(
   DB::Pluggable::Role::Initializer
   DB::Pluggable::Role::WatchFunction
 );
+our $VERSION = '1.112001';
 
 sub initialize {
     @DB::testbreak = ();
@@ -66,15 +64,16 @@ sub watchfunction {
 }
 1;
 
-=begin :prelude
+=pod
 
 =for stopwords watchfunction
 
-=for test_synopsis
-1;
+=for test_synopsis 1;
 __END__
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable::Plugin::BreakOnTestNumber - Debugger plugin to break on Test::Builder-based tests
 
 =head1 SYNOPSIS
 
@@ -104,7 +103,9 @@ breakpoints - with the ability to stop at a specific test number. Andy
 Armstrong had the idea and wrote the original code, see
 L<http://use.perl.org/~AndyArmstrong/journal/35792>.
 
-=method initialize
+=head1 METHODS
+
+=head2 initialize
 
 Sets up the command handler that checks whether the command is of
 the form C<b #12> or C<b #12, 34, ...>. If so, it sets breakpoints
@@ -119,7 +120,7 @@ detect that a test is about to be finished - see the source code of
 L<Test::Builder> for details. Yes, this is nasty. It also means that
 this plugin will break C<Test::Builder> when using threads.
 
-=method watchfunction
+=head2 watchfunction
 
 Checks the current test number from L<Test::Builder> and instructs the
 debugger to stop if an appropriate test number has been reached.

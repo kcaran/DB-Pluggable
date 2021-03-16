@@ -1,13 +1,11 @@
-use 5.010;
+package DB::Pluggable::Plugin::TypeAhead;
 use strict;
 use warnings;
-
-package DB::Pluggable::Plugin::TypeAhead;
-
-# ABSTRACT: Debugger plugin to add type-ahead
+use 5.010;
 use Brickyard::Accessor rw => [qw(type ifenv)];
 use Role::Basic;
 with qw(DB::Pluggable::Role::AfterInit);
+our $VERSION = '1.112001';
 
 sub afterinit {
     my $self = shift;
@@ -23,15 +21,16 @@ sub afterinit {
 }
 1;
 
-=begin :prelude
+=pod
 
 =for stopwords typeahead afterinit
 
-=for test_synopsis
-1;
+=for test_synopsis 1;
 __END__
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable::Plugin::TypeAhead - Debugger plugin to add type-ahead
 
 =head1 SYNOPSIS
 
@@ -66,6 +65,8 @@ typeahead, you would run your program like this:
 The inspiration for this plugin came from Ovid's blog post at
 L<http://blogs.perl.org/users/ovid/2010/02/easier-test-debugging.html>.
 
-=method afterinit
+=head1 METHODS
+
+=head2 afterinit
 
 Pushes the commands to the debugger's typeahead.

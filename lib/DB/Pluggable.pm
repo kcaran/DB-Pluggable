@@ -1,12 +1,10 @@
-use 5.010;
+package DB::Pluggable;
 use strict;
 use warnings;
-
-package DB::Pluggable;
-
-# ABSTRACT: Add plugin support for the Perl debugger
+use 5.010;
 use Brickyard::Accessor new => 1, rw => [qw(brickyard)];
 use Brickyard 1.111750;
+our $VERSION = '1.112001';
 
 sub run_with_config {
     my $file = $_[1];
@@ -70,13 +68,14 @@ my $DB_eval = \&DB::eval;
 };
 1;
 
-=begin :prelude
+=pod
 
-=for test_synopsis
-1;
+=for test_synopsis 1;
 __END__
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable - Add plugin support for the Perl debugger
 
 =head1 SYNOPSIS
 
@@ -108,6 +107,32 @@ that invokes the plugin mechanism.
 
 Plugins should live in the C<DB::Pluggable::Plugin::> namespace, like
 L<DB::Pluggable::Plugin::BreakOnTestNumber> does.
+
+=head1 METHODS
+
+=head2 run_with_config
+
+Convenience class method to create, initialize and run the plugin
+system with the given configuration file or scalar reference.
+
+=head2 plugins_with
+
+Like the method with the same name in L<Brickyard>.
+
+=head2 init_from_config
+
+Like the method with the same name in L<Brickyard>.
+
+=head2 enable_watchfunction
+
+Tells the debugger to call C<DB::watchfunction()>, which in turn
+calls the C<watchfunction()> method of all plugins that consume the
+C<-WatchFunction> role.
+
+=head2 run
+
+This method just calls the C<initialize()> method of all plugins that
+consume the C<-Initializer> role.
 
 =head1 Plugin Phases
 
@@ -145,26 +170,20 @@ introduced to make your command work.
 
 =back
 
-=method run_with_config
+=head1 AUTHOR
 
-Convenience class method to create, initialize and run the plugin
-system with the given configuration file or scalar reference.
+The following person is the author of all the files provided in
+this distribution unless explicitly noted otherwise.
 
-=method plugins_with
+Marcel Gruenauer <marcel@cpan.org>
 
-Like the method with the same name in L<Brickyard>.
+=head1 COPYRIGHT AND LICENSE
 
-=method init_from_config
+The following copyright notice applies to all the files provided in
+this distribution, including binary files, unless explicitly noted
+otherwise.
 
-Like the method with the same name in L<Brickyard>.
+This software is copyright (c) 2008-2011 by Marcel Gruenauer.
 
-=method enable_watchfunction
-
-Tells the debugger to call C<DB::watchfunction()>, which in turn
-calls the C<watchfunction()> method of all plugins that consume the
-C<-WatchFunction> role.
-
-=method run
-
-This method just calls the C<initialize()> method of all plugins that
-consume the C<-Initializer> role.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

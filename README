@@ -2,7 +2,7 @@ NAME
     DB::Pluggable - Add plugin support for the Perl debugger
 
 VERSION
-    version 1.111751
+    version 1.112001
 
 SYNOPSIS
         $ cat ~/.perldb
@@ -96,8 +96,8 @@ AVAILABILITY
     CPAN site near you, or see <http://search.cpan.org/dist/DB-Pluggable/>.
 
     The development version lives at
-    <http://github.com/hanekomu/DB-Pluggable> and may be cloned from
-    <git://github.com/hanekomu/DB-Pluggable.git>. Instead of sending
+    <https://github.com/garu/DB-Pluggable> and may be cloned from
+    <git://github.com/garu/DB-Pluggable.git>. Instead of sending
     patches, please fork this project using the standard git and github
     infrastructure.
 
@@ -105,7 +105,10 @@ AUTHOR
     Marcel Gruenauer <marcel@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2008 by Marcel Gruenauer.
+    The following copyright notice applies to all the files provided in this
+    distribution, including binary files, unless explicitly noted otherwise.
+
+    This software is copyright (c) 2008-2011 by Marcel Gruenauer.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

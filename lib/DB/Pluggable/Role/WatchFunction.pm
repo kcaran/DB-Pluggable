@@ -1,20 +1,20 @@
-use 5.010;
+package DB::Pluggable::Role::WatchFunction;
 use strict;
 use warnings;
-
-package DB::Pluggable::Role::WatchFunction;
-
-# ABSTRACT: Do something during the debugger's watchfunction()
+use 5.010;
 use Role::Basic;
 with qw(Brickyard::Role::Plugin);
 requires qw(watchfunction);
+our $VERSION = '1.112001';
 1;
 
-=begin :prelude
+=pod
 
 =for stopwords watchfunction
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable::Role::WatchFunction - Do something during the debugger's watchfunction()
 
 =head1 IMPLEMENTING
 

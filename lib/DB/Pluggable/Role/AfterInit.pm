@@ -1,20 +1,20 @@
-use 5.010;
+package DB::Pluggable::Role::AfterInit;
 use strict;
 use warnings;
-
-package DB::Pluggable::Role::AfterInit;
-
-# ABSTRACT: Do something in the debugger's afterinit() function
+use 5.010;
 use Role::Basic;
 with qw(Brickyard::Role::Plugin);
 requires qw(afterinit);
+our $VERSION = '1.112001';
 1;
 
-=begin :prelude
+=pod
 
 =for stopwords afterinit
 
-=end :prelude
+=head1 NAME
+
+DB::Pluggable::Role::AfterInit - Do something in the debugger's afterinit() function
 
 =head1 IMPLEMENTING
 

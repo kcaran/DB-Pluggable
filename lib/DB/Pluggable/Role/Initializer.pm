@@ -1,14 +1,18 @@
-use 5.010;
+package DB::Pluggable::Role::Initializer;
 use strict;
 use warnings;
-
-package DB::Pluggable::Role::Initializer;
-
-# ABSTRACT: Something that initializes the plugin system
+use 5.010;
 use Role::Basic;
 with qw(Brickyard::Role::Plugin);
 requires qw(initialize);
+our $VERSION = '1.112001';
 1;
+
+=pod
+
+=head1 NAME
+
+DB::Pluggable::Role::Initializer - Something that initializes the plugin system
 
 =head1 IMPLEMENTING
 

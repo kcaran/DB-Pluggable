@@ -1,14 +1,18 @@
-use 5.010;
+package DB::Pluggable::Role::Eval;
 use strict;
 use warnings;
-
-package DB::Pluggable::Role::Eval;
-
-# ABSTRACT: Do something in the debugger's eval() function
+use 5.010;
 use Role::Basic;
 with qw(Brickyard::Role::Plugin);
 requires qw(eval);
+our $VERSION = '1.112001';
 1;
+
+=pod
+
+=head1 NAME
+
+DB::Pluggable::Role::Eval - Do something in the debugger's eval() function
 
 =head1 IMPLEMENTING
 

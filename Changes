@@ -2,6 +2,13 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.112001  2011-07-19 21:02:33 Europe/Vienna
+    - added VERSION numbers
+
+1.112000  2011-07-19 20:30:08 Europe/Vienna
+    - converted the distribution back to EU::MM style
+    - doc fix for the Data::Printer plugin (thanks garu)
+
 1.111751  2011-06-24 23:54:05 Europe/Vienna
     - doc fix: don't mention nonexistent roles. :)
 
