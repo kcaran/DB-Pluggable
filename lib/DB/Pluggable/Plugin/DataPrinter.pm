@@ -8,8 +8,17 @@ with qw(DB::Pluggable::Role::Initializer);
 our $VERSION = '1.112001';
 
 sub initialize {
+    my ($self) = @_;
     no warnings 'once';
-    $DB::alias{p} = 's/^/use Data::Printer; /; eval $cmd';
+    my @options;
+    for my $opt (keys %{ $self }) {
+      next if $opt eq 'name';
+      next if ref( $self->{ $opt } );
+      push @options, "$opt => $self->{ $opt }";
+     }
+
+    my $options = @options ? ', ' . join( ', ', @options ) : '';
+    $DB::alias{p} = "s/^(.*)\$/Data::Printer::\$1$options/";
 }
 1;
 
@@ -27,8 +36,10 @@ DB::Pluggable::Plugin::DataPrinter - Debugger plugin to use Data::Printer
     $ cat ~/.perldb
 
     use DB::Pluggable;
-    DB::Pluggable->run_with_config(\<<EOINI)
+    DB::Pluggable->run_with_config( \<<EOINI );
     [DataPrinter]
+    output = 'stdout'
+    theme = Monokai
     EOINI
 
     $ perl -d foo.pl
@@ -45,7 +56,8 @@ DB::Pluggable::Plugin::DataPrinter - Debugger plugin to use Data::Printer
 =head1 DESCRIPTION
 
 This debugger plugin exposes L<Data::Printer>'s C<p> command to the
-debugger. Use the C<~/.dataprinter> file to control the output - see
+debugger. Use the C<~/.dataprinter> file to control the output, or
+add options to the [DataPrinter] section in .perldb - see
 L<Data::Printer> for details.
 
 =head1 METHODS

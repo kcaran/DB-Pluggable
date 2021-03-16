@@ -21,7 +21,7 @@ requires:
   Brickyard: 1.111750
   Brickyard::Accessor: 0
   Brickyard::Role::Plugin: 0
-  Data::Printer: 0
+  Data::Printer: 1.000001
   Hook::LexWrap: 0
   Role::Basic: 0
   Test::Builder: 0
