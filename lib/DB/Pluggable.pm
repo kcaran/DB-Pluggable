@@ -70,12 +70,13 @@ my $DB_eval = \&DB::eval;
 
 =pod
 
-=for test_synopsis 1;
 __END__
 
 =head1 NAME
 
 DB::Pluggable - Add plugin support for the Perl debugger
+
+=for test_synopsis BEGIN { die "SKIP: Skipping the config file portion of synopsis...\n" };
 
 =head1 SYNOPSIS
 
@@ -93,7 +94,7 @@ DB::Pluggable - Add plugin support for the Perl debugger
     [DataPrinter]
     EOINI
 
-Then:
+    Then:
 
     $ perl -d foo.pl
 
