@@ -5,7 +5,7 @@ use 5.010;
 use Role::Basic;
 with qw(Brickyard::Role::Plugin);
 requires qw(initialize);
-our $VERSION = '1.112001';
+our $VERSION = '1.12';
 1;
 
 =pod

@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.12  Wed, 08 Mar 2023 13:59:16 -0500
+    - Update to work correctly with Data::Printer
+
 1.112001  2011-07-19 21:02:33 Europe/Vienna
     - added VERSION numbers
 

@@ -4,7 +4,7 @@ use warnings;
 use 5.010;
 use Brickyard::Accessor new => 1, rw => [qw(brickyard)];
 use Brickyard 1.111750;
-our $VERSION = '1.112001';
+our $VERSION = '1.12';
 
 sub run_with_config {
     my $file = $_[1];
@@ -68,9 +68,9 @@ my $DB_eval = \&DB::eval;
 };
 1;
 
-=pod
-
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -173,10 +173,10 @@ introduced to make your command work.
 
 =head1 AUTHOR
 
-The following person is the author of all the files provided in
-this distribution unless explicitly noted otherwise.
-
 Marcel Gruenauer <marcel@cpan.org>
+
+Currently maintained by Keith Carangelo <mail@kcaran.com>
+
 
 =head1 COPYRIGHT AND LICENSE
 

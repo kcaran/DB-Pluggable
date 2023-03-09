@@ -5,7 +5,7 @@ use 5.010;
 use Brickyard::Accessor rw => [qw(type ifenv)];
 use Role::Basic;
 with qw(DB::Pluggable::Role::AfterInit);
-our $VERSION = '1.112001';
+our $VERSION = '1.12';
 
 sub afterinit {
     my $self = shift;

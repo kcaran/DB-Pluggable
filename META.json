@@ -1,47 +1,73 @@
 {
    "abstract" : "Add plugin support for the Perl debugger",
    "author" : [
+      "Keith Carangelo <mail@kcaran.com>",
       "Marcel Gruenauer <marcel@cpan.org>"
    ],
-   "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.58, CPAN::Meta::Converter version 2.110930",
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 6.030, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : "2"
+      "version" : 2
    },
    "name" : "DB-Pluggable",
-   "no_index" : {
-      "directory" : [
-         "t",
-         "inc"
-      ]
-   },
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "ExtUtils::MakeMaker" : 0
-         }
-      },
       "configure" : {
          "requires" : {
-            "ExtUtils::MakeMaker" : "6.58"
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::More" : "0"
          }
       },
       "runtime" : {
+         "recommends" : {
+            "Brickyard" : "1.111750",
+            "Parallel::ForkManager" : "v0.7.6"
+         },
          "requires" : {
             "Brickyard" : "1.111750",
-            "Brickyard::Accessor" : 0,
-            "Brickyard::Role::Plugin" : 0,
-            "Data::Printer" : "1.000001",
-            "Hook::LexWrap" : 0,
-            "Role::Basic" : 0,
-            "Test::Builder" : 0
+            "Brickyard::Accessor" : "0",
+            "Brickyard::Role::Plugin" : "0",
+            "Data::Printer" : "0",
+            "Hook::LexWrap" : "0",
+            "Role::Basic" : "0",
+            "Test::Builder" : "0",
+            "perl" : "5.010",
+            "strict" : "0",
+            "warnings" : "0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Carp" : "0",
+            "File::Find" : "0",
+            "File::Temp" : "0",
+            "Scalar::Util" : "0",
+            "Test::More" : "0.94"
          }
       }
    },
    "release_status" : "stable",
-   "version" : "1.112001"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kcaran/DB-Pluggable/issues"
+      },
+      "homepage" : "https://github.com/kcaran/DB-Pluggable",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kcaran/DB-Pluggable.git",
+         "web" : "https://github.com/kcaran/DB-Pluggable"
+      }
+   },
+   "version" : "1.12",
+   "x_generated_by_perl" : "v5.26.3",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.25",
+   "x_spdx_expression" : "Artistic-1.0-Perl OR GPL-1.0-or-later"
 }
+
